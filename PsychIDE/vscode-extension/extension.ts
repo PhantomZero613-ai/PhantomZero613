@@ -53,6 +53,13 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
+    // Register Snippet Explorer (UI/UX overhaul)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('psychIde.openSnippetExplorer', async () => {
+            openSnippetExplorer(context);
+        })
+    );
+
     // Watch Lua files for changes and validate on change
     const luaWatcher = vscode.workspace.createFileSystemWatcher('**/*.lua');
     luaWatcher.onDidChange(uri => {
@@ -184,4 +191,164 @@ function validateJsonFile(document: vscode.TextDocument) {
 }
 
 export function deactivate() {}
+
+function openSnippetExplorer(context: vscode.ExtensionContext) {
+        const panel = vscode.window.createWebviewPanel(
+                'psychSnippetExplorer',
+                'Psych Snippet Explorer',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+        );
+
+        // Load snippets from extension snippets folder
+        const snippetsDir = path.join(context.extensionPath, 'snippets');
+        const snippets: any[] = [];
+        try {
+                const files = fs.readdirSync(snippetsDir);
+                files.forEach(f => {
+                        if (f.endsWith('.json')) {
+                                try {
+                                        const raw = fs.readFileSync(path.join(snippetsDir, f), 'utf8');
+                                        const json = JSON.parse(raw);
+                                        Object.keys(json).forEach(key => {
+                                                const s = json[key];
+                                                snippets.push({
+                                                        id: key,
+                                                        prefix: s.prefix || key,
+                                                        description: s.description || '',
+                                                        body: Array.isArray(s.body) ? s.body.join('\n') : (s.body || ''),
+                                                        source: f
+                                                });
+                                        });
+                                } catch (e) {
+                                        // ignore malformed snippet files
+                                }
+                        }
+                });
+        } catch (e) {
+                vscode.window.showErrorMessage('Unable to load snippet files: ' + e.message);
+        }
+
+        panel.webview.html = getSnippetExplorerHtml(panel.webview, snippets);
+
+        // Handle messages from the webview
+        panel.webview.onDidReceiveMessage(async message => {
+                if (message.command === 'insertSnippet') {
+                        const editor = vscode.window.activeTextEditor;
+                        if (!editor) {
+                                vscode.window.showErrorMessage('Open a file to insert a snippet into');
+                                return;
+                        }
+                        const snippetString = new vscode.SnippetString(message.body);
+                        editor.insertSnippet(snippetString, editor.selection.start);
+                } else if (message.command === 'copySnippet') {
+                        await vscode.env.clipboard.writeText(message.body);
+                        vscode.window.showInformationMessage('Snippet copied to clipboard');
+                }
+        });
+}
+
+function escapeHtml(s: string) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function getSnippetExplorerHtml(webview: vscode.Webview, snippets: any[]) {
+        const snippetsJson = JSON.stringify(snippets);
+        return `<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{font-family:Segoe UI,system-ui,-apple-system,Roboto,Ubuntu,'Helvetica Neue',Arial;margin:0;padding:0}
+        .toolbar{display:flex;gap:8px;padding:8px;background:#1e1e1e;color:#fff}
+        .search{flex:1;padding:6px;border-radius:4px;border:1px solid #333;background:#252526;color:#fff}
+        .container{display:grid;grid-template-columns:360px 1fr;gap:12px;height:calc(100vh - 48px);padding:12px}
+        .list{overflow:auto;border-right:1px solid #2d2d2d;padding-right:8px}
+        .item{padding:8px;border-radius:6px;margin-bottom:6px;background:#0e0e0e;cursor:pointer}
+        .item:hover{background:#1a1a1a}
+        .prefix{font-weight:600}
+        .desc{color:#bfbfbf;font-size:12px}
+        .preview{padding:8px;background:#0b0b0b;border-radius:6px;color:#dcdcdc;height:100%;overflow:auto}
+        pre{background:#0b0b0b;padding:8px;border-radius:6px;color:#dcdcdc}
+        .actions{margin-top:8px;display:flex;gap:8px}
+        button{padding:6px 10px;border-radius:4px;border:0;background:#007acc;color:white;cursor:pointer}
+        button.secondary{background:#3a3d41}
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <input id="search" class="search" placeholder="Search snippets by prefix, id, or description..." />
+        <select id="sourceFilter">
+            <option value="all">All files</option>
+        </select>
+    </div>
+    <div class="container">
+        <div class="list" id="list"></div>
+        <div class="preview" id="preview">
+            <h3 id="p_title">Select a snippet</h3>
+            <div id="p_desc"></div>
+            <pre id="p_code"></pre>
+            <div class="actions">
+                <button id="insert">Insert</button>
+                <button id="copy" class="secondary">Copy</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const vscode = acquireVsCodeApi();
+        const snippets = ${snippetsJson};
+        const listEl = document.getElementById('list');
+        const previewTitle = document.getElementById('p_title');
+        const previewDesc = document.getElementById('p_desc');
+        const previewCode = document.getElementById('p_code');
+        const search = document.getElementById('search');
+        const sourceFilter = document.getElementById('sourceFilter');
+        let current = null;
+
+        // populate sourceFilter
+        const sources = Array.from(new Set(snippets.map(s=>s.source)));
+        sources.forEach(s=>{
+            const opt = document.createElement('option'); opt.value = s; opt.text = s; sourceFilter.appendChild(opt);
+        });
+
+        function renderList(filter=''){
+            const src = sourceFilter.value;
+            listEl.innerHTML = '';
+            const q = filter.toLowerCase();
+            snippets.filter(s=> (src==='all' || s.source===src) && (
+                s.prefix.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.description.toLowerCase().includes(q)
+            )).forEach(s=>{
+                const it = document.createElement('div'); it.className='item';
+                it.innerHTML = `<div class='prefix'>${escapeHtml(s.prefix)}</div><div class='desc'>${escapeHtml(s.description)}</div>`;
+                it.onclick = ()=>{ selectSnippet(s); };
+                listEl.appendChild(it);
+            });
+        }
+
+        function selectSnippet(s){
+            current = s;
+            previewTitle.textContent = s.prefix + ' — ' + s.id;
+            previewDesc.textContent = s.description + ' (from ' + s.source + ')';
+            previewCode.textContent = s.body;
+        }
+
+        document.getElementById('insert').onclick = ()=>{
+            if(!current) return; vscode.postMessage({command:'insertSnippet', body: current.body});
+        };
+        document.getElementById('copy').onclick = ()=>{
+            if(!current) return; vscode.postMessage({command:'copySnippet', body: current.body});
+        };
+
+        search.addEventListener('input', ()=> renderList(search.value));
+        sourceFilter.addEventListener('change', ()=> renderList(search.value));
+
+        function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+        renderList('');
+    </script>
+</body>
+</html>`;
+}
 

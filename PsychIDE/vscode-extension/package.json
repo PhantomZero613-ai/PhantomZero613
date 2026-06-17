@@ -107,6 +107,10 @@
         "title": "Psych: Validate JSON File"
       },
       {
+        "command": "psychIde.openSnippetExplorer",
+        "title": "Psych: Open Snippet Explorer"
+      },
+      {
         "command": "psychIde.generateSnippet",
         "title": "Psych: Generate Code Snippet"
       }
