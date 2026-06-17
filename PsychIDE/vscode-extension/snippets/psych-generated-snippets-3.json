@@ -1,0 +1,259 @@
+{
+  "intro_tutorial_comment": {
+    "prefix": "tutorial-intro",
+    "body": [
+      "-- Tutorial: Explain where to put this file and how to use snippets",
+      "-- Expand placeholders with Tab and edit values"
+    ],
+    "description": "Small header for tutorial files"
+  },
+  "spawn_boss_intro": {
+    "prefix": "boss-intro",
+    "body": [
+      "makeLuaSprite('boss', '${1:boss/image}', ${2:400}, ${3:100})",
+      "addLuaSprite('boss', true)",
+      "objectPlayAnimation('boss', '${4:intro}', true)"
+    ],
+    "description": "Spawn boss sprite and play intro animation"
+  },
+  "swoosh_sound": {
+    "prefix": "sfx-swoosh",
+    "body": [
+      "playSound('${1:swoosh}', ${2:1})",
+      "setSoundPitch('${1:swoosh}', ${3:1.0})"
+    ],
+    "description": "Play a swoosh SFX with optional pitch"
+  },
+  "env_light_flicker": {
+    "prefix": "env-flicker",
+    "body": [
+      "setProperty('${1:light}.alpha', math.random()*${2:1})",
+      "doTweenAlpha('${1:light}_f', '${1:light}', ${3:1}, ${4:0.2}, 'linear')"
+    ],
+    "description": "Quick environment light flicker"
+  },
+  "step_hit_combo": {
+    "prefix": "step-combo",
+    "body": [
+      "function onStepHit()",
+      "  if curStep % ${1:4} == 0 then",
+      "    addCombo(${2:1})",
+      "  end",
+      "end"
+    ],
+    "description": "Increment combo on step intervals"
+  },
+  "dynamic_music_layer": {
+    "prefix": "music-layer",
+    "body": [
+      "runHaxeCode([[AudioManager.setLayerVolume('${1:layer}', ${2:1.0})]])"
+    ],
+    "description": "Control layered music volume via Haxe"
+  },
+  "spawn_ui_icon": {
+    "prefix": "ui-icon",
+    "body": [
+      "makeLuaSprite('${1:icon}', '${2:assets/ui/icon.png}', ${3:10}, ${4:10})",
+      "addLuaSprite('${1:icon}', true)",
+      "setProperty('${1:icon}.scale.x', ${5:1.0})"
+    ],
+    "description": "Spawn a small UI icon"
+  },
+  "progressive_dimming": {
+    "prefix": "dim-progress",
+    "body": [
+      "function onUpdate(elapsed)",
+      "  setProperty('brightness', math.max(0, getProperty('brightness') - ${1:elapsed}*${2:0.05}))",
+      "end"
+    ],
+    "description": "Gradually dim scene brightness over time"
+  },
+  "make_floating_text": {
+    "prefix": "float-text",
+    "body": [
+      "makeLuaText('${1:id}', '${2:Text}', ${3:200}, ${4:100}, ${5:100})",
+      "addLuaText('${1:id}')",
+      "doTweenY('${1:id}_up', '${1:id}', ${6:0}, ${7:1.0}, 'linear')"
+    ],
+    "description": "Create floating text that moves upward"
+  },
+  "toggle_postfx": {
+    "prefix": "toggle-postfx",
+    "body": [
+      "setProperty('postFX.${1:effect}.enabled', not getProperty('postFX.${1:effect}.enabled'))"
+    ],
+    "description": "Toggle a post-processing effect on/off"
+  },
+  "rain_overlay": {
+    "prefix": "effect-rain",
+    "body": [
+      "initLuaShader('rain')",
+      "setSpriteShader('${1:overlay}', 'rain')",
+      "setShaderFloat('${1:overlay}', 'speed', ${2:1.0})"
+    ],
+    "description": "Add configurable rain overlay shader"
+  },
+  "pause_menu_open": {
+    "prefix": "menu-pause",
+    "body": [
+      "openMenu('pause')",
+      "setProperty('inputEnabled', false)"
+    ],
+    "description": "Open pause menu and disable inputs"
+  },
+  "pause_menu_close": {
+    "prefix": "menu-unpause",
+    "body": [
+      "closeMenu('pause')",
+      "setProperty('inputEnabled', true)"
+    ],
+    "description": "Close pause menu and enable inputs"
+  },
+  "menu_navigation": {
+    "prefix": "menu-nav",
+    "body": [
+      "function onKeyPress(key)",
+      "  if key == 'up' then",
+      "    menuSelectUp()",
+      "  elseif key == 'down' then",
+      "    menuSelectDown()",
+      "  end",
+      "end"
+    ],
+    "description": "Simple menu navigation handler"
+  },
+  "screen_overlay_blend": {
+    "prefix": "overlay-blend",
+    "body": [
+      "setBlendMode('${1:overlay}', '${2:add}')",
+      "setProperty('${1:overlay}.alpha', ${3:0.5})"
+    ],
+    "description": "Apply blend mode to an overlay with alpha"
+  },
+  "instant_teleport": {
+    "prefix": "teleport",
+    "body": [
+      "setProperty('${1:entity}.x', ${2:x})",
+      "setProperty('${1:entity}.y', ${3:y})"
+    ],
+    "description": "Teleport entity to coordinates"
+  },
+  "aiming_reticle": {
+    "prefix": "reticle",
+    "body": [
+      "makeLuaSprite('reticle', '${1:assets/ui/reticle}', ${2:0}, ${3:0})",
+      "addLuaSprite('reticle', true)",
+      "setObjectCamera('reticle', 'camHUD')"
+    ],
+    "description": "Create a HUD aiming reticle"
+  },
+  "dynamic_music_crossfade": {
+    "prefix": "music-xfade",
+    "body": [
+      "runHaxeCode([[AudioManager.crossfade('${1:from}', '${2:to}', ${3:1.5})]])"
+    ],
+    "description": "Crossfade between music tracks"
+  },
+  "shake_with_camera_target": {
+    "prefix": "shake-target",
+    "body": [
+      "cameraShake(getProperty('${1:cam}'), ${2:0.02}, ${3:0.4})"
+    ],
+    "description": "Camera shake using a specified camera"
+  },
+  "hud_timer_countdown": {
+    "prefix": "hud-timer",
+    "body": [
+      "makeLuaText('timer', '${1:00:30}', ${2:100}, ${3:10}, ${4:10})",
+      "addLuaText('timer')",
+      "-- update text in onUpdate to count down"
+    ],
+    "description": "HUD timer element skeleton"
+  },
+  "transition_wipe": {
+    "prefix": "trans-wipe",
+    "body": [
+      "initLuaShader('wipe')",
+      "setSpriteShader('${1:overlay}', 'wipe')",
+      "setShaderFloat('${1:overlay}', 'progress', 0)",
+      "doTweenFloat('wipe', '${1:overlay}', 'progress', 1, ${2:1.0})"
+    ],
+    "description": "Screen wipe transition via shader"
+  },
+  "random_note_modifier": {
+    "prefix": "rand-note",
+    "body": [
+      "local idx = math.random(0, getProperty('notes.length')-1)",
+      "setPropertyFromGroup('notes', idx, 'noteType', ${1:1})"
+    ],
+    "description": "Randomly modify a note's properties"
+  },
+  "toggle_visibility_group": {
+    "prefix": "group-toggle",
+    "body": [
+      "for i=0, getProperty('${1:group}.length')-1 do",
+      "  setPropertyFromGroup('${1:group}', i, 'visible', ${2:false})",
+      "end"
+    ],
+    "description": "Toggle visibility for all objects in a group"
+  },
+  "set_viewport_bounds": {
+    "prefix": "viewport",
+    "body": [
+      "setProperty('camGame.width', ${1:800})",
+      "setProperty('camGame.height', ${2:600})"
+    ],
+    "description": "Set viewport/camera bounds"
+  },
+  "localize_text": {
+    "prefix": "localize",
+    "body": [
+      "local text = getLocalized('${1:key}')",
+      "makeLuaText('${2:id}', text, ${3:300}, ${4:100}, ${5:100})",
+      "addLuaText('${2:id}')"
+    ],
+    "description": "Create localized text element"
+  },
+  "spawn_fx_on_note": {
+    "prefix": "fx-on-note",
+    "body": [
+      "function onNoteHit(id, direction, noteType, isSustain)",
+      "  spawnFX(${1:x}, ${2:y}, '${3:fx}')",
+      "end"
+    ],
+    "description": "Spawn an effect when a note is hit"
+  },
+  "scene_snapshot": {
+    "prefix": "scene-snap",
+    "body": [
+      "runHaxeCode([[Screenshot.capture('${1:filename}.png')]])"
+    ],
+    "description": "Capture a screenshot of the current scene"
+  },
+  "toggle_layer_order": {
+    "prefix": "layer-order",
+    "body": [
+      "setObjectOrder('${1:layer}', ${2:order})"
+    ],
+    "description": "Set draw order for a layer/object"
+  },
+  "flash_damage_hint": {
+    "prefix": "damage-flash",
+    "body": [
+      "setProperty('player.alpha', 0.5)",
+      "doTweenAlpha('pFade', 'player', 1, ${1:0.4}, 'linear')"
+    ],
+    "description": "Flash player sprite to indicate damage"
+  },
+  "bind_event_to_key": {
+    "prefix": "bind-key",
+    "body": [
+      "function onKeyPressed(key)",
+      "  if key == '${1:key}' then",
+      "    triggerEvent('${2:event}', '${3:val1}', '${4:val2}')",
+      "  end",
+      "end"
+    ],
+    "description": "Trigger an event when a key is pressed"
+  }
+}
