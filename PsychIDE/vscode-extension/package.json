@@ -41,6 +41,10 @@
           "language": "lua",
           "path": "./snippets/psych-generated-snippets-3.json"
         },
+        {
+          "language": "lua",
+          "path": "./snippets/psych-generated-snippets-4.json"
+        },
         "extensions": [
           ".hx"
         ],

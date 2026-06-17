@@ -1,0 +1,271 @@
+{
+  "intro_comment_block": {
+    "prefix": "file-header",
+    "body": [
+      "-- File: ${1:script.lua}",
+      "-- Description: ${2:Short description}",
+      "-- Author: ${3:you}"
+    ],
+    "description": "Standard script header comment block"
+  },
+  "make_tilemap_layer": {
+    "prefix": "tilemap-layer",
+    "body": [
+      "-- create a tilemap layer (engine specific)",
+      "runHaxeCode([[createTilemap('${1:tileset}', '${2:layerName}')]])"
+    ],
+    "description": "Create tilemap layer helper (Haxe)"
+  },
+  "set_looping_anim": {
+    "prefix": "anim-loop-set",
+    "body": [
+      "setProperty('${1:sprite}.animation.looped', ${2:true})"
+    ],
+    "description": "Set animation looping on/off"
+  },
+  "clear_group": {
+    "prefix": "clear-group",
+    "body": [
+      "for i=#${1:groupName},1,-1 do",
+      "  removeLuaSprite(${1:groupName}[i], true)",
+      "end"
+    ],
+    "description": "Remove all sprites in a table/group"
+  },
+  "lerp_property": {
+    "prefix": "lerp-prop",
+    "body": [
+      "local t = ${1:0.5}",
+      "local a = getProperty('${2:propA}')",
+      "local b = getProperty('${3:propB}')",
+      "setProperty('${4:target}', a + (b - a) * t)"
+    ],
+    "description": "Linear interpolate between two properties"
+  },
+  "flash_color_on_hit": {
+    "prefix": "hit-flash",
+    "body": [
+      "function goodNoteHit(id, direction, noteType, isSustain)",
+      "  setProperty('flash.alpha', 1)",
+      "  doTweenAlpha('flashFade', 'flash', 0, ${1:0.3}, 'linear')",
+      "end"
+    ],
+    "description": "Flash overlay when a note is hit"
+  },
+  "spawn_obstacle": {
+    "prefix": "spawn-obstacle",
+    "body": [
+      "runHaxeCode([[spawnObstacle(${1:x}, ${2:y}, '${3:type}')]])"
+    ],
+    "description": "Spawn obstacle via Haxe helper"
+  },
+  "toggle_post_process": {
+    "prefix": "postfx-toggle",
+    "body": [
+      "setProperty('postEffects.${1:name}.enabled', not getProperty('postEffects.${1:name}.enabled'))"
+    ],
+    "description": "Toggle named post-processing effect"
+  },
+  "create_mask": {
+    "prefix": "mask-create",
+    "body": [
+      "runHaxeCode([[createMask('${1:id}', ${2:x}, ${3:y}, ${4:w}, ${5:h})]])"
+    ],
+    "description": "Create a rectangular mask via Haxe"
+  },
+  "minimap_setup": {
+    "prefix": "minimap",
+    "body": [
+      "-- Setup mini-map HUD element",
+      "makeLuaSprite('minimap', 'ui/minimap', ${1:600}, ${2:10})",
+      "addLuaSprite('minimap', true)"
+    ],
+    "description": "Add a minimap HUD element"
+  },
+  "dynamic_light_create": {
+    "prefix": "dyn-light",
+    "body": [
+      "runHaxeCode([[DynamicLight.create(${1:x}, ${2:y}, ${3:intensity})]])"
+    ],
+    "description": "Create a dynamic light source (Haxe)"
+  },
+  "music_tempo_sync": {
+    "prefix": "tempo-sync",
+    "body": [
+      "function onBeatHit()",
+      "  local bpm = getProperty('song.bpm')",
+      "  -- sync animations to bpm",
+      "end"
+    ],
+    "description": "Template to sync logic to song BPM"
+  },
+  "lerp_camera": {
+    "prefix": "cam-lerp",
+    "body": [
+      "local t = ${1:0.1}",
+      "setProperty('camGame.x', getProperty('camGame.x') + ( ${2:targetX} - getProperty('camGame.x') ) * t)",
+      "setProperty('camGame.y', getProperty('camGame.y') + ( ${3:targetY} - getProperty('camGame.y') ) * t)"
+    ],
+    "description": "Smoothly move camera toward a target via lerp"
+  },
+  "animate_sprite_on_beat": {
+    "prefix": "anim-on-beat",
+    "body": [
+      "function onBeatHit()",
+      "  objectPlayAnimation('${1:id}', '${2:anim}', true)",
+      "end"
+    ],
+    "description": "Play an animation on the beat"
+  },
+  "fade_music_and_stop": {
+    "prefix": "music-stop",
+    "body": [
+      "runHaxeCode([[FlxTween.tween(game.music, {volume:0}, ${1:1.0}, {onComplete:function() game.music.stop();}})])"
+    ],
+    "description": "Fade out music and stop playback"
+  },
+  "set_camera_bounds": {
+    "prefix": "cam-bounds",
+    "body": [
+      "setProperty('camGame.boundLeft', ${1:0})",
+      "setProperty('camGame.boundRight', ${2:800})",
+      "setProperty('camGame.boundTop', ${3:0})",
+      "setProperty('camGame.boundBottom', ${4:600})"
+    ],
+    "description": "Define camera movement bounds"
+  },
+  "toggle_vsync": {
+    "prefix": "vsync",
+    "body": [
+      "setProperty('video.vsync', not getProperty('video.vsync'))"
+    ],
+    "description": "Toggle vsync setting"
+  },
+  "spawn_health_pickup": {
+    "prefix": "spawn-heal",
+    "body": [
+      "runHaxeCode([[spawnPickup(${1:x}, ${2:y}, 'health')]])"
+    ],
+    "description": "Spawn a health pickup via Haxe helper"
+  },
+  "fade_layer_by_name": {
+    "prefix": "fade-layer",
+    "body": [
+      "doTweenAlpha('${1:tn}', '${2:layer}', ${3:0}, ${4:1.0}, 'linear')"
+    ],
+    "description": "Fade a named layer"
+  },
+  "set_music_pitch_over_time": {
+    "prefix": "music-pitch",
+    "body": [
+      "runHaxeCode([[FlxTween.tween(game.music, {pitch:${1:1.2}}, ${2:1.0})]])"
+    ],
+    "description": "Tween music pitch smoothly"
+  },
+  "spawn_decoy": {
+    "prefix": "spawn-decoy",
+    "body": [
+      "makeLuaSprite('${1:decoy}', '${2:image}', ${3:x}, ${4:y})",
+      "addLuaSprite('${1:decoy}', false)"
+    ],
+    "description": "Create a temporary decoy sprite"
+  },
+  "set_layer_parallax": {
+    "prefix": "layer-parallax",
+    "body": [
+      "setProperty('${1:layer}.scrollFactor.x', ${2:0.6})",
+      "setProperty('${1:layer}.scrollFactor.y', ${3:0.6})"
+    ],
+    "description": "Adjust parallax scroll factor for layer"
+  },
+  "camera_shake_on_event": {
+    "prefix": "shake-event",
+    "body": [
+      "function onEvent(name, value1, value2)",
+      "  if name == '${1:EventName}' then",
+      "    cameraShake('camGame', ${2:0.02}, ${3:0.4})",
+      "  end",
+      "end"
+    ],
+    "description": "Trigger camera shake from named event"
+  },
+  "set_shader_color_over_time": {
+    "prefix": "shader-color-time",
+    "body": [
+      "doTweenFloat('colorT', '${1:sprite}', '${2:colorUniform}', ${3:1.0}, ${4:2.0})"
+    ],
+    "description": "Animate a shader color uniform over time"
+  },
+  "spawn_flashbang": {
+    "prefix": "flashbang",
+    "body": [
+      "makeLuaSprite('flashbang', 'white', -100, -100)",
+      "addLuaSprite('flashbang', true)",
+      "setProperty('flashbang.alpha', 1)",
+      "doTweenAlpha('fb', 'flashbang', 0, ${1:0.8}, 'linear')"
+    ],
+    "description": "Create bright flashbang effect"
+  },
+  "vfx_reverb_trigger": {
+    "prefix": "vfx-reverb",
+    "body": [
+      "runHaxeCode([[AudioManager.setReverb(${1:amount})]])"
+    ],
+    "description": "Set reverb amount for audio"
+  },
+  "spawn_ui_badge": {
+    "prefix": "ui-badge",
+    "body": [
+      "makeLuaSprite('${1:badge}', '${2:assets/ui/badge.png}', ${3:10}, ${4:10})",
+      "addLuaSprite('${1:badge}', true)"
+    ],
+    "description": "Spawn a small badge icon on HUD"
+  },
+  "scope_debug_logging": {
+    "prefix": "dbg-scope",
+    "body": [
+      "debugPrint('Scope: ' .. tostring(${1:var}))"
+    ],
+    "description": "Print a variable's scope for debugging"
+  },
+  "animate_sprite_scale": {
+    "prefix": "anim-scale",
+    "body": [
+      "doTweenX('${1:id}_sx', '${1:id}', ${2:1.2}, ${3:0.4}, 'elasticOut')",
+      "doTweenY('${1:id}_sy', '${1:id}', ${2:1.2}, ${3:0.4}, 'elasticOut')"
+    ],
+    "description": "Animate sprite scale with easing"
+  },
+  "playback_speed_control": {
+    "prefix": "playback-speed",
+    "body": [
+      "setProperty('playbackSpeed', ${1:1.0})"
+    ],
+    "description": "Set global playback speed for testing"
+  },
+  "debug_draw_circle": {
+    "prefix": "dbg-circle",
+    "body": [
+      "runHaxeCode([[FlxG.graphics.drawCircle(${1:x}, ${2:y}, ${3:r}, 0xFFFF0000)]])"
+    ],
+    "description": "Draw a debug circle in the scene"
+  },
+  "spawn_text_with_outline": {
+    "prefix": "text-outline",
+    "body": [
+      "makeLuaText('${1:id}', '${2:text}', ${3:300}, ${4:100}, ${5:100})",
+      "setTextBorder('${1:id}', ${6:2}, ${7:0x000000})",
+      "addLuaText('${1:id}')"
+    ],
+    "description": "Create text with outline/border"
+  },
+  "safe_remove_sprite": {
+    "prefix": "safe-remove",
+    "body": [
+      "if getProperty('${1:id}.exists') then",
+      "  removeLuaSprite('${1:id}', true)",
+      "end"
+    ],
+    "description": "Remove sprite only if it exists"
+  }
+}
