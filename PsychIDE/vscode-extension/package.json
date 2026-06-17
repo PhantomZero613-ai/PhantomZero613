@@ -69,6 +69,11 @@
         "language": "lua",
         "path": "./snippets/psych-shader-snippets.json"
       }
+      ,
+      {
+        "language": "lua",
+        "path": "./snippets/psych-generated-snippets.json"
+      }
     ],
     "jsonValidation": [
       {

@@ -1,0 +1,460 @@
+{
+  "make_sprite_quick": {
+    "prefix": "make-sprite",
+    "body": [
+      "makeLuaSprite('${1:id}', '${2:assets/images/${3:image}.png}', ${4:0}, ${5:0})",
+      "addLuaSprite('${1:id}', ${6:false})"
+    ],
+    "description": "Create and add a sprite in one line"
+  },
+  "make_animated_sprite": {
+    "prefix": "make-anim-sprite",
+    "body": [
+      "makeAnimatedLuaSprite('${1:id}', '${2:assets/sprites/${3:image}.png}', ${4:0}, ${5:0})",
+      "addAnimationByPrefix('${1:id}', '${6:anim}', '${7:prefix}', ${8:24}, ${9:false})",
+      "addLuaSprite('${1:id}', ${10:false})"
+    ],
+    "description": "Create animated sprite and add animation"
+  },
+  "shader_init_set": {
+    "prefix": "init-shader",
+    "body": [
+      "if shadersEnabled then",
+      "    initLuaShader('${1:shaderName}')",
+      "    setSpriteShader('${2:spriteId}', '${1:shaderName}')",
+      "end"
+    ],
+    "description": "Initialize shader and attach to sprite"
+  },
+  "shader_time_uniform": {
+    "prefix": "shader-time",
+    "body": [
+      "local t = os.clock()",
+      "setShaderFloat('${1:spriteId}', 'iTime', t)"
+    ],
+    "description": "Set common time uniform for animated shaders"
+  },
+  "shader_vec2": {
+    "prefix": "shader-vec2",
+    "body": [
+      "setShaderVec2('${1:spriteId}', '${2:uniform}', ${3:0.0}, ${4:0.0})"
+    ],
+    "description": "Set vec2 uniform on shader"
+  },
+  "tween_simple_move": {
+    "prefix": "tween-move",
+    "body": [
+      "doTweenX('${1:tweenId}', '${2:target}', ${3:100}, ${4:0.5}, '${5:linear}')",
+      "doTweenY('${1:tweenId}Y', '${2:target}', ${6:100}, ${4:0.5}, '${5:linear}')"
+    ],
+    "description": "Simple X/Y move tween for a target"
+  },
+  "tween_alpha": {
+    "prefix": "tween-alpha-s",
+    "body": [
+      "doTweenAlpha('${1:tweenId}', '${2:target}', ${3:0.0}, ${4:0.75}, '${5:quadOut}')"
+    ],
+    "description": "Tween alpha (fade) on a sprite"
+  },
+  "camera_shake_short": {
+    "prefix": "cam-shake",
+    "body": [
+      "cameraShake('camGame', ${1:0.01}, ${2:0.25})"
+    ],
+    "description": "Short camera shake effect"
+  },
+  "camera_zoom_pulse": {
+    "prefix": "cam-zoom-pulse",
+    "body": [
+      "doTweenZoom('camPulse', 'camGame', ${1:1.1}, ${2:0.3}, '${3:circOut}')",
+      "runHaxeCode([[FlxTween.cameraZoom(game.camera, ${1:1.1}, ${2:0.3})]])"
+    ],
+    "description": "Pulse camera zoom using tween and optional Haxe fallback"
+  },
+  "beat_bop": {
+    "prefix": "beat-bop",
+    "body": [
+      "function onBeatHit()",
+      "    if curBeat % ${1:2} == 0 then",
+      "        doTweenY('${2:voffset}', '${3:gf}', ${4:-10}, ${5:0.2}, 'circOut')",
+      "    end",
+      "end"
+    ],
+    "description": "Beat-synced small 'bop' animation"
+  },
+  "hud_flash": {
+    "prefix": "hud-flash",
+    "body": [
+      "makeLuaSprite('flash', 'white', -100, -100)",
+      "setObjectCamera('flash', 'camHUD')",
+      "setProperty('flash.alpha', 0)",
+      "addLuaSprite('flash', true)",
+      "doTweenAlpha('flashTween', 'flash', 1, ${1:0.15}, 'quadOut')",
+      "doTweenAlpha('flashTween2', 'flash', 0, ${2:0.4}, 'quadIn')"
+    ],
+    "description": "Quick HUD flash effect"
+  },
+  "vintage_scanlines": {
+    "prefix": "effect-scan",
+    "body": [
+      "initLuaShader('scanlines')",
+      "setSpriteShader('${1:gameBackdrop}', 'scanlines')",
+      "setShaderFloat('${1:gameBackdrop}', 'intensity', ${2:0.5})"
+    ],
+    "description": "Apply scanlines effect shader"
+  },
+  "chromatic_aberration": {
+    "prefix": "effect-chrome",
+    "body": [
+      "initLuaShader('chromatic')",
+      "setSpriteShader('${1:gameBackdrop}', 'chromatic')",
+      "setShaderFloat('${1:gameBackdrop}', 'amount', ${2:0.01})"
+    ],
+    "description": "Chromatic aberration shader setup"
+  },
+  "pixelate_effect": {
+    "prefix": "effect-pixel",
+    "body": [
+      "initLuaShader('pixelate')",
+      "setSpriteShader('${1:gameBackdrop}', 'pixelate')",
+      "setShaderFloat('${1:gameBackdrop}', 'pixelSize', ${2:4.0})"
+    ],
+    "description": "Pixelate effect with adjustable pixel size"
+  },
+  "glow_pulse": {
+    "prefix": "effect-glow",
+    "body": [
+      "initLuaShader('glow')",
+      "setSpriteShader('${1:gameBackdrop}', 'glow')",
+      "setShaderFloat('${1:gameBackdrop}', 'radius', ${2:2.0})",
+      "setShaderFloat('${1:gameBackdrop}', 'intensity', ${3:0.6})"
+    ],
+    "description": "Glow shader pulse basic setup"
+  },
+  "ui_text_center": {
+    "prefix": "ui-center-text",
+    "body": [
+      "makeLuaText('${1:id}', '${2:Hello World}', ${3:400}, ${4:0}, ${5:0})",
+      "setTextAlignment('${1:id}', 'center')",
+      "addLuaText('${1:id}')"
+    ],
+    "description": "Create centered UI text element"
+  },
+  "ui_button_skel": {
+    "prefix": "ui-btn",
+    "body": [
+      "makeLuaSprite('${1:btnId}', '${2:assets/ui/button.png}', ${3:100}, ${4:100})",
+      "addLuaSprite('${1:btnId}', true)",
+      "-- add interactivity via onMousePressed or custom event"
+    ],
+    "description": "UI button skeleton (static)"
+  },
+  "audio_cue": {
+    "prefix": "audio-cue",
+    "body": [
+      "playSound('${1:soundName}', ${2:1.0})",
+      "setSoundVolume('${1:soundName}', ${3:0.8})"
+    ],
+    "description": "Play an audio cue and set volume"
+  },
+  "fade_to_black": {
+    "prefix": "fade-black",
+    "body": [
+      "makeLuaSprite('fade', 'black', 0, 0)",
+      "setObjectCamera('fade', 'camHUD')",
+      "setProperty('fade.alpha', 0)",
+      "addLuaSprite('fade', true)",
+      "doTweenAlpha('fadeIn', 'fade', 1, ${1:1.0}, 'linear')"
+    ],
+    "description": "Fade screen to black"
+  },
+  "dialog_popup": {
+    "prefix": "dialog-popup",
+    "body": [
+      "makeLuaSprite('dialogBG', 'ui/dialog_bg', ${1:100}, ${2:100})",
+      "addLuaSprite('dialogBG', true)",
+      "makeLuaText('dialogTxt', '${3:Message here}', ${4:300}, ${5:120}, ${6:120})",
+      "addLuaText('dialogTxt')"
+    ],
+    "description": "Simple dialog popup skeleton"
+  },
+  "input_press_check": {
+    "prefix": "input-check",
+    "body": [
+      "function onUpdatePost(elapsed)",
+      "    if keyJustPressed('space') then",
+      "        debugPrint('Space pressed')",
+      "    end",
+      "end"
+    ],
+    "description": "Handle single-key press checks in update loop"
+  },
+  "save_state_quick": {
+    "prefix": "save-state",
+    "body": [
+      "setVar('${1:key}', ${2:value})",
+      "debugPrint('Saved ${1:key} = ' .. tostring(${2:value}))"
+    ],
+    "description": "Quick save state variable helper"
+  },
+  "load_state_quick": {
+    "prefix": "load-state",
+    "body": [
+      "local ${1:val} = getVar('${2:key}')",
+      "debugPrint('Loaded ${2:key} = ' .. tostring(${1:val}))"
+    ],
+    "description": "Load previously saved state variable"
+  },
+  "debug_print_json": {
+    "prefix": "dbg-json",
+    "body": [
+      "debugPrint(json.encode(${1:table}))"
+    ],
+    "description": "Debug print a Lua table as JSON (requires JSON lib)"
+  },
+  "loop_for_notes": {
+    "prefix": "for-notes",
+    "body": [
+      "for i=0,getProperty('notes.length')-1 do",
+      "    local noteType = getPropertyFromGroup('notes', i, 'noteType')",
+      "    -- process note",
+      "end"
+    ],
+    "description": "Loop through note objects and inspect properties"
+  },
+  "spawn_note_example": {
+    "prefix": "spawn-note",
+    "body": [
+      "-- Requires proper engine API: example skeletal call",
+      "spawnNote(${1:player}, ${2:noteType}, ${3:position})"
+    ],
+    "description": "Template for spawning a note (engine-specific)"
+  },
+  "legacy_note_handler": {
+    "prefix": "legacy-note",
+    "body": [
+      "function goodNoteHit(id, direction, noteType, isSustain)",
+      "    debugPrint('Good note hit: ' .. tostring(id))",
+      "end"
+    ],
+    "description": "Legacy note hit handler signature"
+  },
+  "perf_profiler_start": {
+    "prefix": "perf-start",
+    "body": [
+      "local _start = os.clock()",
+      "${1:-- run code to profile}"
+    ],
+    "description": "Start simple CPU time profiling block"
+  },
+  "perf_profiler_end": {
+    "prefix": "perf-end",
+    "body": [
+      "local _end = os.clock()",
+      "debugPrint('Elapsed: ' .. tostring(_end - _start))"
+    ],
+    "description": "End profiling and print elapsed time"
+  },
+  "spawn_sprite_at_random": {
+    "prefix": "spawn-rand",
+    "body": [
+      "local x = math.random(${1:0}, ${2:800})",
+      "local y = math.random(${3:0}, ${4:600})",
+      "makeLuaSprite('${5:id}' .. math.random(0,999), '${6:assets/images/img.png}', x, y)",
+      "addLuaSprite('${5:id}' .. math.random(0,999), false)"
+    ],
+    "description": "Spawn sprite at random position"
+  },
+  "animate_and_remove": {
+    "prefix": "anim-remove",
+    "body": [
+      "objectPlayAnimation('${1:id}', '${2:anim}', true)",
+      "runHaxeCode([[FlxTimer.schedule(game, ${3:1.0}, function() game.remove(${1:id}) end)]])"
+    ],
+    "description": "Play animation then schedule removal via Haxe call"
+  },
+  "toggle_visibility": {
+    "prefix": "toggle-vis",
+    "body": [
+      "setProperty('${1:id}.visible', not getProperty('${1:id}.visible'))"
+    ],
+    "description": "Toggle object visibility on/off"
+  },
+  "shader_flash_on_beat": {
+    "prefix": "shader-beat",
+    "body": [
+      "function onBeatHit()",
+      "    setShaderFloat('${1:sprite}', 'intensity', ${2:0.8})",
+      "    doTweenFloat('sch', '${1:sprite}', 'intensity', ${3:0.0}, ${4:0.5})",
+      "end"
+    ],
+    "description": "Temporarily boost shader intensity on beat"
+  },
+  "camera_follow_point": {
+    "prefix": "cam-follow",
+    "body": [
+      "setProperty('camFollow.x', ${1:0})",
+      "setProperty('camFollow.y', ${2:0})",
+      "setProperty('camFollowEnabled', ${3:true})"
+    ],
+    "description": "Set camera follow point and enable"
+  },
+  "note_sustain_handler": {
+    "prefix": "sustain-handle",
+    "body": [
+      "function onSustainNoteHit(id, direction, noteType)",
+      "    debugPrint('Sustain handled: ' .. tostring(id))",
+      "end"
+    ],
+    "description": "Handle sustain notes separately"
+  },
+  "simple_timer": {
+    "prefix": "timer-simple",
+    "body": [
+      "runHaxeCode([[FlxTimer.schedule(game, ${1:1.0}, function() ${2://callback} end)]])"
+    ],
+    "description": "Schedule a delayed callback via Haxe FlxTimer"
+  },
+  "ui_progress_bar": {
+    "prefix": "ui-progress",
+    "body": [
+      "makeLuaSprite('barBG', 'ui/bar_bg', ${1:50}, ${2:50})",
+      "makeLuaSprite('barFill', 'ui/bar_fill', ${1:50}, ${2:50})",
+      "addLuaSprite('barBG', true)",
+      "addLuaSprite('barFill', true)",
+      "setProperty('barFill.scale.x', ${3:0.5})"
+    ],
+    "description": "Create simple UI progress bar with fill scale"
+  },
+  "credits_roll": {
+    "prefix": "credits-roll",
+    "body": [
+      "makeLuaText('credits', '${1:Credits go here}', ${2:600}, ${3:100}, ${4:600})",
+      "addLuaText('credits')",
+      "doTweenY('creditsScroll', 'credits', -${5:400}, ${6:10.0}, 'linear')"
+    ],
+    "description": "Create rolling credits text"
+  },
+  "sfx_stereo_pan": {
+    "prefix": "sfx-pan",
+    "body": [
+      "setSoundPan('${1:sfx}', ${2:-1.0}) -- -1 left, 1 right"
+    ],
+    "description": "Pan a sound effect left/right"
+  },
+  "health_threshold_event": {
+    "prefix": "health-thresh",
+    "body": [
+      "function onUpdate(elapsed)",
+      "    if getProperty('health') < ${1:0.2} then",
+      "        ${2:-- low health behavior}",
+      "    end",
+      "end"
+    ],
+    "description": "Trigger behavior when health falls under threshold"
+  },
+  "sprite_follow_camera": {
+    "prefix": "sprite-follow-cam",
+    "body": [
+      "setProperty('${1:sprite}.x', getProperty('camGame.scroll.x') + ${2:0})",
+      "setProperty('${1:sprite}.y', getProperty('camGame.scroll.y') + ${3:0})"
+    ],
+    "description": "Make a sprite follow camera scroll position"
+  },
+  "loop_with_delay": {
+    "prefix": "loop-delay",
+    "body": [
+      "for i=1,${1:10} do",
+      "    runHaxeCode([[FlxTimer.schedule(game, ${2:0.1}, function() ${3://callback} end)]])",
+      "end"
+    ],
+    "description": "Loop with delayed Haxe timer callbacks"
+  },
+  "cleanup_objects": {
+    "prefix": "cleanup-objects",
+    "body": [
+      "for i=#objects,1,-1 do",
+      "    if objects[i].tag == '${1:temp}' then",
+      "        removeLuaSprite(objects[i].id, true)",
+      "    end",
+      "end"
+    ],
+    "description": "Remove temporary objects by tag"
+  },
+  "debug_draw_rect": {
+    "prefix": "dbg-rect",
+    "body": [
+      "runHaxeCode([[FlxG.graphics.drawRect(${1:0}, ${2:0}, ${3:100}, ${4:100}, 0xFF00FF00)]])"
+    ],
+    "description": "Quick debug rectangle via Haxe graphics"
+  },
+  "toggle_shader_effect": {
+    "prefix": "toggle-shader",
+    "body": [
+      "local on = not getProperty('${1:sprite}.shaderOn')",
+      "if on then setSpriteShader('${1:sprite}', '${2:shader}') else setSpriteShader('${1:sprite}', '') end",
+      "setProperty('${1:sprite}.shaderOn', on)"
+    ],
+    "description": "Toggle shader on/off for a sprite"
+  },
+  "randomize_tint": {
+    "prefix": "rand-tint",
+    "body": [
+      "local r = math.random(0,255)",
+      "local g = math.random(0,255)",
+      "local b = math.random(0,255)",
+      "setProperty('${1:sprite}.color', (r<<16) | (g<<8) | b)"
+    ],
+    "description": "Randomize tint color of a sprite"
+  },
+  "parallax_layer": {
+    "prefix": "parallax",
+    "body": [
+      "makeLuaSprite('${1:layer}', '${2:path}', ${3:0}, ${4:0})",
+      "addLuaSprite('${1:layer}', false)",
+      "setProperty('${1:layer}.scrollFactor.x', ${5:0.5})",
+      "setProperty('${1:layer}.scrollFactor.y', ${6:0.5})"
+    ],
+    "description": "Create a parallax background layer"
+  },
+  "camera_follow_target": {
+    "prefix": "cam-follow-target",
+    "body": [
+      "setProperty('camFollow.x', getCharX('${1:player}') + ${2:0})",
+      "setProperty('camFollow.y', getCharY('${1:player}') + ${3:0})"
+    ],
+    "description": "Center camera on a character target (helper)"
+  },
+  "end_sequence_cutscene": {
+    "prefix": "cutscene-end",
+    "body": [
+      "-- simple end-of-song cutscene sequence",
+      "doTweenAlpha('fadeOut', 'camHUD', 1, ${1:1.5}, 'linear')",
+      "runHaxeCode([[FlxTimer.schedule(game, ${2:1.6}, function() ${3:// next scene} end)]])"
+    ],
+    "description": "End sequence cutscene skeleton"
+  },
+  "notes_spawn_batch": {
+    "prefix": "spawn-batch",
+    "body": [
+      "for i=1,${1:4} do",
+      "    spawnNote(${2:player}, ${3:noteType}, ${4:position + i})",
+      "end"
+    ],
+    "description": "Spawn a small batch of notes in sequence"
+  },
+  "simple_state_machine": {
+    "prefix": "state-machine",
+    "body": [
+      "local state = '${1:idle}'",
+      "function onUpdate(elapsed)",
+      "    if state == '${1:idle}' then",
+      "        -- handle idle",
+      "    elseif state == '${2:active}' then",
+      "        -- handle active",
+      "    end",
+      "end"
+    ],
+    "description": "Small state machine skeleton for gameplay states"
+  }
+}
