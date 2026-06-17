@@ -1,0 +1,209 @@
+{
+  "shader_uniform_float": {
+    "prefix": "shader-float",
+    "body": [
+      "-- Set float uniform for shader",
+      "setShaderFloat('${1:shaderId}', '${2:uniformName}', ${3:1.0})"
+    ],
+    "description": "Set a single float shader uniform"
+  },
+  "shader_uniform_int": {
+    "prefix": "shader-int",
+    "body": [
+      "-- Set integer uniform for shader",
+      "setShaderInt('${1:shaderId}', '${2:uniformName}', ${3:1})"
+    ],
+    "description": "Set an integer shader uniform"
+  },
+  "shader_vec2_color": {
+    "prefix": "shader-vec2-color",
+    "body": [
+      "-- Set vec2 as color or directional value",
+      "setShaderVec2('${1:shaderId}', '${2:uniformName}', ${3:0.5}, ${4:0.5})"
+    ],
+    "description": "Set vec2 shader uniform (e.g., for color or direction)"
+  },
+  "shader_vec3_rgb": {
+    "prefix": "shader-vec3-rgb",
+    "body": [
+      "-- Set vec3 as RGB color",
+      "setShaderVec3('${1:shaderId}', '${2:colorName}', ${3:1.0}, ${4:0.0}, ${5:0.0})  -- Red example"
+    ],
+    "description": "Set vec3 RGB color uniform"
+  },
+  "glow_effect": {
+    "prefix": "effect-glow",
+    "body": [
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('glow');",
+      "        ]])",
+      "        makeLuaSprite('glowShader')",
+      "        setSpriteShader('glowShader', 'glow')",
+      "        setShaderFloat('glowShader', 'glowIntensity', ${1:0.5})",
+      "        addLuaSprite('glowShader', true)",
+      "    end",
+      "end"
+    ],
+    "description": "Apply glow shader effect"
+  },
+  "chromatic_aberration": {
+    "prefix": "effect-chromatic",
+    "body": [
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('chromatic');",
+      "        ]])",
+      "        makeLuaSprite('chromaticShader')",
+      "        setSpriteShader('chromaticShader', 'chromatic')",
+      "        setShaderVec2('chromaticShader', 'offset', ${1:0.01}, ${2:0.01})",
+      "        addLuaSprite('chromaticShader', true)",
+      "    end",
+      "end"
+    ],
+    "description": "Apply chromatic aberration effect"
+  },
+  "scan_lines_effect": {
+    "prefix": "effect-scanlines",
+    "body": [
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('scanlines');",
+      "        ]])",
+      "        makeLuaSprite('scanlineShader')",
+      "        setSpriteShader('scanlineShader', 'scanlines')",
+      "        setShaderFloat('scanlineShader', 'intensity', ${1:0.3})",
+      "        addLuaSprite('scanlineShader', true)",
+      "    end",
+      "end"
+    ],
+    "description": "Apply CRT scanlines effect"
+  },
+  "distortion_wave": {
+    "prefix": "effect-distort",
+    "body": [
+      "function onUpdatePost(elapsed)",
+      "    if shadersEnabled and getProperty('distortApplied') then",
+      "        local time = getSongPosition() / 1000.0",
+      "        setShaderFloat('distortShader', 'time', time)",
+      "        setShaderFloat('distortShader', 'amplitude', ${1:0.1})",
+      "        setShaderFloat('distortShader', 'frequency', ${2:2.0})",
+      "    end",
+      "end"
+    ],
+    "description": "Apply animated wave distortion effect"
+  },
+  "color_grading": {
+    "prefix": "effect-colorgrade",
+    "body": [
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        -- Apply color grading/tone mapping",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('colorgrade');",
+      "        ]])",
+      "        setSpriteShader('camGame', 'colorgrade')",
+      "        setShaderVec3('camGame', 'colorShift', ${1:1.0}, ${2:0.8}, ${3:0.6})",
+      "    end",
+      "end"
+    ],
+    "description": "Apply color grading/tone mapping shader"
+  },
+  "heatwave_animated": {
+    "prefix": "effect-heatwave",
+    "body": [
+      "function onUpdatePost(elapsed)",
+      "    if shadersEnabled then",
+      "        local time = getSongPosition() / 1000.0",
+      "        setShaderFloat('heatwave', 'time', time)",
+      "        setShaderFloat('heatwave', 'amplitude', ${1:0.05})",
+      "        setShaderFloat('heatwave', 'speed', ${2:2.0})",
+      "    end",
+      "end"
+    ],
+    "description": "Animate heatwave distortion effect over time"
+  },
+  "pixelate_effect": {
+    "prefix": "effect-pixelate",
+    "body": [
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('pixelate');",
+      "        ]])",
+      "        setSpriteShader('camGame', 'pixelate')",
+      "        setShaderFloat('pixelate', 'pixelSize', ${1:4.0})",
+      "    end",
+      "end"
+    ],
+    "description": "Apply pixelation shader"
+  },
+  "motion_blur": {
+    "prefix": "effect-motionblur",
+    "body": [
+      "function onUpdatePost(elapsed)",
+      "    if shadersEnabled then",
+      "        setShaderFloat('motionblur', 'blurAmount', ${1:0.1})",
+      "        setShaderVec2('motionblur', 'velocity', ${2:0.0}, ${3:0.5})",
+      "    end",
+      "end"
+    ],
+    "description": "Apply motion blur effect"
+  },
+  "vhs_glitch": {
+    "prefix": "effect-vhs",
+    "body": [
+      "function onUpdatePost(elapsed)",
+      "    if shadersEnabled then",
+      "        local time = getSongPosition() / 1000.0",
+      "        setShaderFloat('vhs', 'time', time)",
+      "        setShaderFloat('vhs', 'glitchAmount', ${1:0.02})",
+      "    end",
+      "end"
+    ],
+    "description": "Apply VHS glitch/distortion effect"
+  },
+  "bloom_glow": {
+    "prefix": "effect-bloom",
+    "body": [
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('bloom');",
+      "        ]])",
+      "        setSpriteShader('camGame', 'bloom')",
+      "        setShaderFloat('bloom', 'bloomThreshold', ${1:0.7})",
+      "        setShaderFloat('bloom', 'bloomIntensity', ${2:1.2})",
+      "    end",
+      "end"
+    ],
+    "description": "Apply bloom/glow effect to bright areas"
+  },
+  "shader_time_uniform": {
+    "prefix": "shader-time",
+    "body": [
+      "function onUpdatePost(elapsed)",
+      "    if shadersEnabled then",
+      "        local elapsed_ms = getSongPosition()",
+      "        setShaderFloat('${1:shaderId}', 'time', elapsed_ms / 1000.0)",
+      "    end",
+      "end"
+    ],
+    "description": "Update shader time uniform each frame"
+  },
+  "shader_disable": {
+    "prefix": "shader-disable",
+    "body": [
+      "function onDestroy()",
+      "    -- Remove all shaders from camera",
+      "    runHaxeCode([[",
+      "        game.camGame.setFilters(null);",
+      "    ]])",
+      "end"
+    ],
+    "description": "Disable all shaders on cleanup"
+  }
+}

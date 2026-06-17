@@ -60,6 +60,14 @@
       {
         "language": "lua",
         "path": "./snippets/psych-version-snippets.json"
+      },
+      {
+        "language": "lua",
+        "path": "./snippets/psych-gameplay-snippets.json"
+      },
+      {
+        "language": "lua",
+        "path": "./snippets/psych-shader-snippets.json"
       }
     ],
     "jsonValidation": [

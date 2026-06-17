@@ -1,0 +1,190 @@
+{
+  "character_change_event": {
+    "prefix": "event-char-change",
+    "body": [
+      "function onEvent(name, value1, value2)",
+      "    if name == 'Change Character' then",
+      "        debugPrint('Changing character: ' .. value1)",
+      "        -- value1 = character ID",
+      "        setProperty('dad.character', value1)",
+      "    end",
+      "end"
+    ],
+    "description": "Change character on event trigger"
+  },
+  "camera_zoom_tween": {
+    "prefix": "event-cam-zoom",
+    "body": [
+      "function onEvent(name, value1, value2)",
+      "    if name == 'Camera Zoom' then",
+      "        local zoomAmount = tonumber(value1) or 1.1",
+      "        doTweenZoom('camZoom', 'camGame', zoomAmount, 0.5, 'circOut')",
+      "    end",
+      "end"
+    ],
+    "description": "Tween camera zoom on event"
+  },
+  "sprite_alpha_fade": {
+    "prefix": "tween-alpha",
+    "body": [
+      "doTweenAlpha('${1:spriteId}_fade', '${1:spriteId}', ${2:0.5}, ${3:1.0}, '${4:linear}')"
+    ],
+    "description": "Fade sprite alpha with tween"
+  },
+  "sprite_scale_tween": {
+    "prefix": "tween-scale",
+    "body": [
+      "doTweenX('${1:spriteId}_scaleX', '${1:spriteId}', ${2:1.5}, ${3:0.5}, '${4:linear}', ${5:0.0})",
+      "doTweenY('${1:spriteId}_scaleY', '${1:spriteId}', ${2:1.5}, ${3:0.5}, '${4:linear}', ${5:0.0})"
+    ],
+    "description": "Scale sprite with dual axis tween"
+  },
+  "miss_note_handler": {
+    "prefix": "event-miss",
+    "body": [
+      "function noteMiss(membersIndex, noteData, noteType, isSustainNote)",
+      "    debugPrint('Note missed! Type: ' .. noteType)",
+      "    -- noteData: 0=LEFT, 1=DOWN, 2=UP, 3=RIGHT",
+      "    ${1:-- handle miss}",
+      "end"
+    ],
+    "description": "Handle missed note events"
+  },
+  "stage_setup": {
+    "prefix": "stage-setup",
+    "body": [
+      "function onCreate()",
+      "    setProperty('defaultCamZoom', ${1:0.9})",
+      "    setProperty('camFollowPoint.x', ${2:120})",
+      "    setProperty('camFollowPoint.y', ${3:100})",
+      "    ${4:-- additional stage setup}",
+      "end"
+    ],
+    "description": "Stage initialization with camera setup"
+  },
+  "beat_sync_animation": {
+    "prefix": "beat-sync",
+    "body": [
+      "function onBeatHit()",
+      "    debugPrint('Beat ' .. curBeat)",
+      "    if (curBeat % ${1:2}) == 0 then",
+      "        ${2:-- trigger animation or effect}",
+      "    end",
+      "end"
+    ],
+    "description": "Beat-synced animation trigger"
+  },
+  "step_counter": {
+    "prefix": "step-counter",
+    "body": [
+      "function onStepHit()",
+      "    if (curStep % ${1:16}) == 0 then",
+      "        debugPrint('Measure ' .. math.floor(curStep / 16))",
+      "        ${2:-- measure-based logic}",
+      "    end",
+      "end"
+    ],
+    "description": "Step-based counter for measure-aligned events"
+  },
+  "health_bar_change": {
+    "prefix": "event-health",
+    "body": [
+      "function onEvent(name, value1, value2)",
+      "    if name == 'Health' then",
+      "        local healthChange = tonumber(value1) or 0",
+      "        setProperty('health', getProperty('health') + healthChange)",
+      "    end",
+      "end"
+    ],
+    "description": "Change player health on event"
+  },
+  "song_time_check": {
+    "prefix": "check-time",
+    "body": [
+      "function onUpdate(elapsed)",
+      "    local songPos = getSongPosition()",
+      "    if songPos >= ${1:5000} and songPos < ${2:10000} then",
+      "        ${3:-- apply effect during this time range}",
+      "    end",
+      "end"
+    ],
+    "description": "Check song position and trigger based on time"
+  },
+  "property_getter": {
+    "prefix": "get-prop",
+    "body": [
+      "local ${1:value} = getProperty('${2:property.path}')",
+      "debugPrint('${2:property.path}' .. ${1:value})"
+    ],
+    "description": "Get and log a property value"
+  },
+  "property_setter_debug": {
+    "prefix": "set-prop-debug",
+    "body": [
+      "setProperty('${1:property.path}', ${2:value})",
+      "debugPrint('Set ${1:property.path} to ' .. tostring(getProperty('${1:property.path}')))"
+    ],
+    "description": "Set property with debug confirmation"
+  },
+  "run_haxe_code": {
+    "prefix": "haxe-code",
+    "body": [
+      "runHaxeCode([[",
+      "    ${1:// Haxe code here}",
+      "    ${2:game.add(...)}",
+      "]])"
+    ],
+    "description": "Run inline Haxe code from Lua"
+  },
+  "animation_loop_check": {
+    "prefix": "anim-loop",
+    "body": [
+      "function onUpdate(elapsed)",
+      "    if getProperty('${1:spriteId}.animation.curAnim') ~= nil then",
+      "        if getProperty('${1:spriteId}.animation.finished') then",
+      "            debugPrint('Animation finished: ${1:spriteId}')",
+      "            ${2:-- restart or handle completion}",
+      "        end",
+      "    end",
+      "end"
+    ],
+    "description": "Check when animation finishes and loop/restart"
+  },
+  "countdown_start_event": {
+    "prefix": "event-countdown",
+    "body": [
+      "function onCountdownStarted()",
+      "    debugPrint('Countdown started!')",
+      "    ${1:-- setup before song starts}",
+      "end",
+      "",
+      "function onSongStart()",
+      "    debugPrint('Song started!')",
+      "    ${2:-- song initialization}",
+      "end"
+    ],
+    "description": "Handle countdown and song start events"
+  },
+  "note_spawn_modify": {
+    "prefix": "event-note-spawn",
+    "body": [
+      "function onGenerateNotes()",
+      "    -- Called when notes are generated",
+      "    -- Use setNoteProperty() to modify individual notes",
+      "    ${1:-- note modification logic}",
+      "end"
+    ],
+    "description": "Modify notes as they spawn"
+  },
+  "game_over_screen": {
+    "prefix": "event-gameover",
+    "body": [
+      "function gameOverConfirm()",
+      "    debugPrint('Game Over confirmed')",
+      "    ${1:-- cleanup or custom game over handling}",
+      "    return true  -- allow default behavior",
+      "end"
+    ],
+    "description": "Handle game over screen confirmation"
+  }
+}
