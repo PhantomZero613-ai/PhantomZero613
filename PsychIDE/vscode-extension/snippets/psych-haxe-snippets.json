@@ -1,0 +1,112 @@
+{
+  "playstate_class": {
+    "prefix": "haxe-playstate",
+    "body": [
+      "package ;",
+      "",
+      "import flixel.FlxState;",
+      "import flixel.FlxG;",
+      "",
+      "class ${1:PlayState} extends FlxState",
+      "{",
+      "    override public function create():Void",
+      "    {",
+      "        super.create();",
+      "        ${2:// initialize your scene here}",
+      "    }",
+      "",
+      "    override public function update(elapsed:Float):Void",
+      "    {",
+      "        super.update(elapsed);",
+      "        ${3:// update logic here}",
+      "    }",
+      "}"
+    ],
+    "description": "Haxe PlayState class skeleton for Psych Engine mods"
+  },
+  "create_sprite": {
+    "prefix": "haxe-sprite",
+    "body": [
+      "import flixel.FlxSprite;",
+      "",
+      "var ${1:sprite} = new FlxSprite(${2:100}, ${3:100});",
+      "${1:sprite}.loadGraphic('${4:assets/images/sprite.png}');",
+      "${1:sprite}.scrollFactor.set(${5:1}, ${6:1});",
+      "add(${1:sprite});"
+    ],
+    "description": "Create and add a FlxSprite to the state"
+  },
+  "create_text": {
+    "prefix": "haxe-text",
+    "body": [
+      "import flixel.text.FlxText;",
+      "",
+      "var ${1:text} = new FlxText(${2:10}, ${3:10}, ${4:200}, '${5:Hello, Psych!}');",
+      "${1:text}.setFormat(null, ${6:24}, 0xffffffff, '${7:left}');",
+      "add(${1:text});"
+    ],
+    "description": "Create a FlxText display object"
+  },
+  "override_create": {
+    "prefix": "haxe-oncreate",
+    "body": [
+      "override public function create():Void",
+      "{",
+      "    super.create();",
+      "    ${1:// initialization code}",
+      "}"
+    ],
+    "description": "Override create() in a Haxe state or object"
+  },
+  "override_update": {
+    "prefix": "haxe-onupdate",
+    "body": [
+      "override public function update(elapsed:Float):Void",
+      "{",
+      "    super.update(elapsed);",
+      "    ${1:// per-frame update logic}",
+      "}"
+    ],
+    "description": "Override update() in a Haxe state or object"
+  },
+  "set_property": {
+    "prefix": "haxe-setprop",
+    "body": [
+      "setProperty('${1:property.path}', ${2:value});"
+    ],
+    "description": "Set a Psych Engine property using setProperty"
+  },
+  "tween_sprite": {
+    "prefix": "haxe-tween",
+    "body": [
+      "import flixel.tweens.FlxTween;",
+      "",
+      "FlxTween.tween(${1:sprite}, { x: ${2:200}, y: ${3:120} }, ${4:1.0}, { ease: FlxEase.circOut });"
+    ],
+    "description": "Tween a sprite position with FlxTween"
+  },
+  "shader_init": {
+    "prefix": "haxe-shader",
+    "body": [
+      "runLuaCode('game.initLuaShader(\\\'${1:shaderName}\\\')');",
+      "runLuaCode('game.setSpriteShader(\\\'${2:spriteId}\\\', \\\'${1:shaderName}\\\')');"
+    ],
+    "description": "Initialize shader support from Haxe using Lua helper calls"
+  },
+  "sound_play": {
+    "prefix": "haxe-sound",
+    "body": [
+      "playSound('${1:beat}', ${2:1.0});"
+    ],
+    "description": "Play a sound effect in Psych Engine"
+  },
+  "camera_follow": {
+    "prefix": "haxe-camera",
+    "body": [
+      "game.camFollow = ${1:true};",
+      "game.camFollow.x = ${2:640};",
+      "game.camFollow.y = ${3:360};"
+    ],
+    "description": "Set camera follow behavior in Psych Engine"
+  }
+}
