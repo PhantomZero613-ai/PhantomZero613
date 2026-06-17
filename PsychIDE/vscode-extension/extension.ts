@@ -114,10 +114,94 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
+    // Signature info and completion data derived from the same function set
+    const psychSignatures: { [key: string]: { label: string, params: string[] } } = {
+        'initLuaShader': { label: 'initLuaShader(shaderName: string)', params: ['shaderName'] },
+        'setSpriteShader': { label: 'setSpriteShader(spriteId: string, shaderName: string)', params: ['spriteId', 'shaderName'] },
+        'setShaderFloat': { label: 'setShaderFloat(spriteId: string, uniform: string, value: number)', params: ['spriteId', 'uniform', 'value'] },
+        'setShaderInt': { label: 'setShaderInt(spriteId: string, uniform: string, value: number)', params: ['spriteId', 'uniform', 'value'] },
+        'setShaderVec2': { label: 'setShaderVec2(spriteId: string, uniform: string, x: number, y: number)', params: ['spriteId', 'uniform', 'x', 'y'] },
+        'setShaderVec3': { label: 'setShaderVec3(spriteId: string, uniform: string, x: number, y: number, z: number)', params: ['spriteId', 'uniform', 'x', 'y', 'z'] },
+        'makeLuaSprite': { label: 'makeLuaSprite(id: string, image: string, x: number, y: number)', params: ['id', 'image', 'x', 'y'] },
+        'addLuaSprite': { label: 'addLuaSprite(id: string, inFront: boolean)', params: ['id', 'inFront'] },
+        'makeGraphic': { label: 'makeGraphic(name: string, width: number, height: number, color: number)', params: ['name', 'width', 'height', 'color'] },
+        'runHaxeCode': { label: 'runHaxeCode(code: string)', params: ['code'] },
+        'debugPrint': { label: 'debugPrint(message: string)', params: ['message'] },
+        'getSongPosition': { label: 'getSongPosition()', params: [] },
+        'getVar': { label: 'getVar(name: string)', params: ['name'] },
+        'setVar': { label: 'setVar(name: string, value: any)', params: ['name', 'value'] },
+        'doTweenX': { label: 'doTweenX(id: string, target: string, value: number, duration: number)', params: ['id','target','value','duration'] },
+        'doTweenY': { label: 'doTweenY(id: string, target: string, value: number, duration: number)', params: ['id','target','value','duration'] }
+    };
+
+    // Completion provider for Psych functions and registered snippet prefixes
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider('lua', {
+        provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
+            const items: vscode.CompletionItem[] = [];
+            // Add function completions
+            Object.keys(psychSignatures).forEach(fn => {
+                const item = new vscode.CompletionItem(fn, vscode.CompletionItemKind.Function);
+                item.detail = psychSignatures[fn].label;
+                item.insertText = fn + '(';
+                items.push(item);
+            });
+
+            // Add snippet prefix completions by scanning snippets folder (fast cache)
+            try {
+                const snippetsDir = path.join(context.extensionPath, 'snippets');
+                const files = fs.readdirSync(snippetsDir);
+                files.forEach(f => {
+                    if (f.endsWith('.json')) {
+                        try {
+                            const raw = fs.readFileSync(path.join(snippetsDir, f), 'utf8');
+                            const json = JSON.parse(raw);
+                            Object.keys(json).forEach(key => {
+                                const s = json[key];
+                                if (s.prefix) {
+                                    const it = new vscode.CompletionItem(s.prefix, vscode.CompletionItemKind.Snippet);
+                                    it.detail = s.description || f;
+                                    it.insertText = new vscode.SnippetString(Array.isArray(s.body) ? s.body.join('\n') : s.body || '');
+                                    items.push(it);
+                                }
+                            });
+                        } catch (e) {
+                            // ignore
+                        }
+                    }
+                });
+            } catch (e) {
+                // ignore
+            }
+
+            return items;
+        }
+    }, '.', '('));
+
+    // Signature help provider
+    context.subscriptions.push(vscode.languages.registerSignatureHelpProvider('lua', {
+        provideSignatureHelp(document: vscode.TextDocument, position: vscode.Position) {
+            const line = document.lineAt(position.line).text.substring(0, position.character);
+            const match = line.match(/(\w+)\s*\([^()]*$/);
+            if (!match) return null;
+            const fn = match[1];
+            const sig = psychSignatures[fn];
+            if (!sig) return null;
+            const params = sig.params.map(p => new vscode.ParameterInformation(p));
+            const si = new vscode.SignatureInformation(sig.label, '');
+            si.parameters = params;
+            const help = new vscode.SignatureHelp();
+            help.signatures = [si];
+            // attempt to set active parameter by counting commas
+            const commaCount = (line.match(/,/g) || []).length;
+            help.activeParameter = Math.min(commaCount, params.length-1);
+            help.activeSignature = 0;
+            return help;
+        }
+    }, '(', ','));
+
     console.log('Psych Engine IDE commands registered');
 }
 
-function validateLuaFile(document: vscode.TextDocument) {
     const diagnostics: vscode.Diagnostic[] = [];
     const text = document.getText();
     const lines = text.split('\n');
