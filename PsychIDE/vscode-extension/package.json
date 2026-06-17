@@ -24,8 +24,21 @@
     "languages": [
       {
         "id": "lua",
-        "extensions": [".lua"],
-        "aliases": ["Lua"]
+        "extensions": [
+          ".lua"
+        ],
+        "aliases": [
+          "Lua"
+        ]
+      },
+      {
+        "id": "haxe",
+        "extensions": [
+          ".hx"
+        ],
+        "aliases": [
+          "Haxe"
+        ]
       }
     ],
     "grammars": [
@@ -39,6 +52,14 @@
       {
         "language": "lua",
         "path": "./snippets/psych-snippets.json"
+      },
+      {
+        "language": "haxe",
+        "path": "./snippets/psych-haxe-snippets.json"
+      },
+      {
+        "language": "lua",
+        "path": "./snippets/psych-version-snippets.json"
       }
     ],
     "jsonValidation": [
@@ -72,8 +93,8 @@
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
+    "@types/node": "^25.9.3",
     "@types/vscode": "^1.75.0",
-    "@types/node": "latest",
     "typescript": "latest"
   },
   "dependencies": {

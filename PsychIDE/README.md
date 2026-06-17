@@ -35,6 +35,38 @@ PsychIDE/
 ✅ **Debug Sandbox** - Test Lua code without running the full engine
 ✅ **Integrated Shader Editor** - GLSL shader support with hot reload
 
+## Snippet Library
+
+The PsychIDE extension includes ready-made code snippets for both **Lua** and **Haxe** modding.
+
+- Use the Lua snippet file: `PsychIDE/vscode-extension/snippets/psych-snippets.json`
+- Use the Haxe snippet file: `PsychIDE/vscode-extension/snippets/psych-haxe-snippets.json`
+
+Example snippet prefixes:
+
+- `shader` — full Lua shader activation template
+- `sprite-tween` — create a sprite and tween it
+- `event` — custom Lua event handler
+- `haxe-playstate` — Haxe `FlxState` class skeleton
+- `haxe-sprite` — create and add a `FlxSprite`
+- `v104-shader` — Psych Engine v1.0.4 shader setup
+- `v073-note` — Psych Engine v0.7.3 legacy note handler
+
+### Version-specific snippets
+
+The `psych-version-snippets.json` file provides version-aware Lua patterns for both:
+
+- `v1.0.4` Psych Engine workflows
+- `v0.7.3` legacy Lua event handling and character switching
+
+This helps you learn the differences between engine versions while coding.
+
+### How to use
+
+1. Install the PsychIDE VS Code extension from `PsychIDE/vscode-extension/`.
+2. Open a `.lua` or `.hx` file.
+3. Type a snippet prefix and press `Tab` to expand it.
+
 ## Quick Start
 
 ```bash

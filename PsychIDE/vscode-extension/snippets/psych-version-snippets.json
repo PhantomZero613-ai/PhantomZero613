@@ -1,0 +1,104 @@
+{
+  "v104_shader_setup": {
+    "prefix": "v104-shader",
+    "body": [
+      "-- Psych Engine v1.0.4 shader setup",
+      "function onCreate()",
+      "    if shadersEnabled then",
+      "        debugPrint('Loading ${1:shaderName}');",
+      "        runHaxeCode([[",
+      "            game.initLuaShader('${1:shaderName}');",
+      "        ]])",
+      "        makeLuaSprite('${2:shaderSprite}')",
+      "        setSpriteShader('${2:shaderSprite}', '${1:shaderName}')",
+      "        addLuaSprite('${2:shaderSprite}', true)",
+      "    end",
+      "end"
+    ],
+    "description": "Psych Engine v1.0.4 shader initialization template"
+  },
+  "v104_camera_follow": {
+    "prefix": "v104-cam",
+    "body": [
+      "-- v1.0.4 camera follow helper",
+      "function onUpdate(elapsed)",
+      "    if mustHitSection then",
+      "        setProperty('camFollow.x', ${1:640})",
+      "        setProperty('camFollow.y', ${2:360})",
+      "    else",
+      "        setProperty('camFollow.x', ${3:320})",
+      "        setProperty('camFollow.y', ${4:180})",
+      "    end",
+      "end"
+    ],
+    "description": "Camera follow helper for Psych Engine v1.0.4"
+  },
+  "v104_flash_effect": {
+    "prefix": "v104-flash",
+    "body": [
+      "-- flash effect for Psych Engine v1.0.4",
+      "function flashScreen(duration)",
+      "    runHaxeCode([[",
+      "        game.flashCamera(0xffffffff, ${1:0.2});",
+      "    ]])",
+      "end"
+    ],
+    "description": "Screen flash effect snippet for v1.0.4"
+  },
+  "v073_legacy_note_hit": {
+    "prefix": "v073-note",
+    "body": [
+      "-- Psych Engine v0.7.3 legacy note handler",
+      "function goodNoteHit(id, direction, noteType, isSustainNote)",
+      "    debugPrint('Hit note: ' .. noteType)",
+      "    ${1:-- add v0.7.3 note behavior here}",
+      "end"
+    ],
+    "description": "Legacy note hit handler for Psych Engine v0.7.3"
+  },
+  "v073_character_switch": {
+    "prefix": "v073-char",
+    "body": [
+      "-- Change character the old Psych Engine way",
+      "function onEvent(name, value1, value2)",
+      "    if name == 'Change Character' then",
+      "        setProperty('boyfriend.character', '${1:bf}')",
+      "        setProperty('dad.character', '${2:dad}')",
+      "    end",
+      "end"
+    ],
+    "description": "Character switching event template for v0.7.3"
+  },
+  "v104_haxe_playstate": {
+    "prefix": "v104-haxe",
+    "body": [
+      "// Psych Engine v1.0.4 Haxe PlayState pattern",
+      "package ;",
+      "",
+      "import flixel.FlxState;",
+      "import flixel.FlxG;",
+      "",
+      "class ${1:PlayState} extends FlxState",
+      "{",
+      "    override public function create():Void",
+      "    {",
+      "        super.create();",
+      "        ${2:// init game objects here}",
+      "    }",
+      "}",
+      ""
+    ],
+    "description": "Haxe PlayState skeleton for Psych Engine v1.0.4"
+  },
+  "v073_haxe_legacy_comment": {
+    "prefix": "v073-haxe",
+    "body": [
+      "// Psych Engine v0.7.3 Haxe compatibility note",
+      "// Some older APIs may differ in naming and game state access",
+      "// Example: use `game.singDuration` instead of newer fields",
+      "${1:// add code here}",
+      ""
+    ],
+    "description": "Haxe comment template for Psych Engine v0.7.3 compatibility"
+  }
+}

@@ -53,9 +53,9 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Watch Lua files for changes and validate on save
+    // Watch Lua files for changes and validate on change
     const luaWatcher = vscode.workspace.createFileSystemWatcher('**/*.lua');
-    luaWatcher.onDidSave(uri => {
+    luaWatcher.onDidChange(uri => {
         const document = vscode.workspace.textDocuments.find(doc => doc.uri === uri);
         if (document) {
             validateLuaFile(document);
@@ -65,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Watch JSON files for changes
     const jsonWatcher = vscode.workspace.createFileSystemWatcher('{**/song.json,**/character.json}');
-    jsonWatcher.onDidSave(uri => {
+    jsonWatcher.onDidChange(uri => {
         const document = vscode.workspace.textDocuments.find(doc => doc.uri === uri);
         if (document) {
             validateJsonFile(document);
