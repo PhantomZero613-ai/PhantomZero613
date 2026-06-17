@@ -33,6 +33,10 @@
       },
       {
         "id": "haxe",
+        {
+          "language": "lua",
+          "path": "./snippets/psych-generated-snippets-2.json"
+        },
         "extensions": [
           ".hx"
         ],

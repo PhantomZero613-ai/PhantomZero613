@@ -1,0 +1,264 @@
+{
+  "spawn_enemy_wave": {
+    "prefix": "spawn-wave",
+    "body": [
+      "for i=1,${1:3} do",
+      "  spawnEnemy('${2:type}', ${3:x + i*10}, ${4:y})",
+      "end"
+    ],
+    "description": "Spawn a small enemy wave (engine dependent)"
+  },
+  "quick_fade_in": {
+    "prefix": "fade-in",
+    "body": [
+      "setProperty('${1:obj}.alpha', 0)",
+      "doTweenAlpha('${1:obj}_in', '${1:obj}', 1, ${2:0.5}, 'quadOut')"
+    ],
+    "description": "Fade object in quickly"
+  },
+  "quick_fade_out": {
+    "prefix": "fade-out",
+    "body": [
+      "doTweenAlpha('${1:obj}_out', '${1:obj}', 0, ${2:0.5}, 'quadIn')"
+    ],
+    "description": "Fade object out quickly"
+  },
+  "vignette_setup": {
+    "prefix": "effect-vignette",
+    "body": [
+      "initLuaShader('vignette')",
+      "setSpriteShader('${1:gameBackdrop}', 'vignette')",
+      "setShaderFloat('${1:gameBackdrop}', 'radius', ${2:0.75})"
+    ],
+    "description": "Add vignette shader with radius control"
+  },
+  "strobe_effect": {
+    "prefix": "effect-strobe",
+    "body": [
+      "function onBeatHit()",
+      "  setProperty('flash.alpha', ${1:1})",
+      "  doTweenAlpha('flashOut', 'flash', 0, ${2:0.12}, 'linear')",
+      "end"
+    ],
+    "description": "Simple strobe flash on beats"
+  },
+  "eye_candy_particles": {
+    "prefix": "particles",
+    "body": [
+      "-- placeholder: create particle emitter via Haxe or engine API",
+      "runHaxeCode([[createParticleEmitter('${1:emit}', ${2:x}, ${3:y})]])"
+    ],
+    "description": "Spawn a particle emitter (engine-specific)"
+  },
+  "shader_color_shift": {
+    "prefix": "shader-color-shift",
+    "body": [
+      "initLuaShader('colorShift')",
+      "setSpriteShader('${1:sprite}', 'colorShift')",
+      "setShaderVec3('${1:sprite}', 'tint', ${2:1.0}, ${3:0.9}, ${4:0.8})"
+    ],
+    "description": "Apply color shift shader with tint"
+  },
+  "dialogue_skip": {
+    "prefix": "dialog-skip",
+    "body": [
+      "function onUpdate(elapsed)",
+      "  if keyJustPressed('enter') then",
+      "    endDialogue()",
+      "  end",
+      "end"
+    ],
+    "description": "Allow skipping dialogues with Enter"
+  },
+  "music_fade": {
+    "prefix": "music-fade",
+    "body": [
+      "runHaxeCode([[FlxTween.tween(game.music, {volume:${1:0}}, ${2:1.5})]])"
+    ],
+    "description": "Fade music volume via Haxe tween"
+  },
+  "dynamic_shadow": {
+    "prefix": "shadow-dyn",
+    "body": [
+      "setProperty('${1:sprite}.shadow.offset.x', ${2:2})",
+      "setProperty('${1:sprite}.shadow.offset.y', ${3:2})"
+    ],
+    "description": "Adjust dynamic shadow offset for a sprite"
+  },
+  "screen_shake_burst": {
+    "prefix": "shake-burst",
+    "body": [
+      "cameraShake('camGame', ${1:0.03}, ${2:0.6})",
+      "runHaxeCode([[FlxTimer.schedule(game, ${3:0.6}, function() end)]])"
+    ],
+    "description": "Longer camera shake burst"
+  },
+  "note_color_change": {
+    "prefix": "note-color",
+    "body": [
+      "setPropertyFromGroup('notes', ${1:index}, 'color', ${2:0xFF0000})"
+    ],
+    "description": "Change a note's color by index"
+  },
+  "toggle_debug_overlay": {
+    "prefix": "dbg-toggle",
+    "body": [
+      "setProperty('debugOverlay', not getProperty('debugOverlay'))"
+    ],
+    "description": "Toggle debug overlay visibility"
+  },
+  "spawn_trail_effect": {
+    "prefix": "trail",
+    "body": [
+      "runHaxeCode([[spawnTrail(${1:x}, ${2:y}, '${3:color}')]])"
+    ],
+    "description": "Spawn a trailing effect via Haxe helper"
+  },
+  "infinite_scroll_bg": {
+    "prefix": "inf-scroll",
+    "body": [
+      "setProperty('${1:layer}.looping', true)",
+      "setProperty('${1:layer}.scrollSpeed', ${2:0.5})"
+    ],
+    "description": "Enable infinite scrolling for a background layer"
+  },
+  "screen_warp": {
+    "prefix": "screen-warp",
+    "body": [
+      "initLuaShader('warp')",
+      "setSpriteShader('${1:gameBackdrop}', 'warp')",
+      "setShaderFloat('${1:gameBackdrop}', 'amplitude', ${2:0.02})"
+    ],
+    "description": "Apply warp distortion shader"
+  },
+  "looped_sound": {
+    "prefix": "sfx-loop",
+    "body": [
+      "playSound('${1:sound}', ${2:1.0})",
+      "setSoundLooping('${1:sound}', true)"
+    ],
+    "description": "Play a looping sound effect"
+  },
+  "disable_inputs": {
+    "prefix": "disable-inputs",
+    "body": [
+      "setProperty('inputEnabled', false)"
+    ],
+    "description": "Disable player inputs temporarily"
+  },
+  "enable_inputs": {
+    "prefix": "enable-inputs",
+    "body": [
+      "setProperty('inputEnabled', true)"
+    ],
+    "description": "Enable player inputs"
+  },
+  "quick_restart_song": {
+    "prefix": "restart-song",
+    "body": [
+      "runHaxeCode([[game.restartSong()]])"
+    ],
+    "description": "Restart the current song via Haxe call"
+  },
+  "fade_ui_element": {
+    "prefix": "ui-fade",
+    "body": [
+      "doTweenAlpha('${1:id}_ui', '${1:id}', ${2:0.0}, ${3:0.5}, 'quadIn')"
+    ],
+    "description": "Fade a UI element"
+  },
+  "camera_cut_to": {
+    "prefix": "cam-cut",
+    "body": [
+      "setProperty('camGame.x', ${1:x})",
+      "setProperty('camGame.y', ${2:y})"
+    ],
+    "description": "Instant camera cut to coordinates"
+  },
+  "warp_audio_pitch": {
+    "prefix": "audio-pitch",
+    "body": [
+      "setSoundPitch('${1:track}', ${2:1.2})"
+    ],
+    "description": "Change audio pitch for an effect"
+  },
+  "text_typewriter": {
+    "prefix": "typewriter",
+    "body": [
+      "runHaxeCode([[startTypewriter('textId', '${1:text}', ${2:speed})]])"
+    ],
+    "description": "Start a typewriter text effect via Haxe helper"
+  },
+  "trigger_custom_event": {
+    "prefix": "trigger-event",
+    "body": [
+      "triggerEvent('${1:EventName}', '${2:val1}', '${3:val2}')"
+    ],
+    "description": "Trigger a custom event by name"
+  },
+  "simple_score_add": {
+    "prefix": "score-add",
+    "body": [
+      "setProperty('score', getProperty('score') + ${1:100})"
+    ],
+    "description": "Add to the player's score"
+  },
+  "flash_screen_color": {
+    "prefix": "flash-color",
+    "body": [
+      "makeLuaSprite('colorFlash', '${1:color}', -100, -100)",
+      "setObjectCamera('colorFlash', 'camHUD')",
+      "addLuaSprite('colorFlash', true)",
+      "doTweenAlpha('cf', 'colorFlash', 0, ${2:0.5}, 'linear')"
+    ],
+    "description": "Flash screen with a color overlay"
+  },
+  "particle_burst": {
+    "prefix": "particle-burst",
+    "body": [
+      "runHaxeCode([[ParticleSystem.burst(${1:x}, ${2:y}, ${3:count})]])"
+    ],
+    "description": "Create a particle burst via Haxe helper"
+  },
+  "blink_sprite": {
+    "prefix": "blink",
+    "body": [
+      "doTweenAlpha('${1:id}_blink', '${1:id}', 0, ${2:0.08}, 'linear')",
+      "doTweenAlpha('${1:id}_blink2', '${1:id}', 1, ${3:0.08}, 'linear')"
+    ],
+    "description": "Quick blink effect for a sprite"
+  },
+  "apply_grayscale": {
+    "prefix": "effect-gray",
+    "body": [
+      "initLuaShader('grayscale')",
+      "setSpriteShader('${1:gameBackdrop}', 'grayscale')"
+    ],
+    "description": "Apply grayscale shader to backdrop"
+  },
+  "random_delay_call": {
+    "prefix": "rand-delay",
+    "body": [
+      "runHaxeCode([[FlxTimer.schedule(game, math.random()*${1:1.0}, function() ${2://callback} end)]])"
+    ],
+    "description": "Run callback after a random short delay"
+  },
+  "shake_and_fade": {
+    "prefix": "shake-fade",
+    "body": [
+      "cameraShake('camGame', ${1:0.02}, ${2:0.4})",
+      "doTweenAlpha('fadeOut', 'camHUD', 1, ${3:0.6}, 'linear')"
+    ],
+    "description": "Combine shake and screen fade"
+  },
+  "simple_collision_box": {
+    "prefix": "coll-box",
+    "body": [
+      "-- Example: create collision box and check overlap in update",
+      "makeLuaSprite('${1:box}', 'white', ${2:0}, ${3:0})",
+      "setProperty('${1:box}.alpha', 0)",
+      "addLuaSprite('${1:box}', false)"
+    ],
+    "description": "Create an invisible collision box sprite"
+  }
+}
