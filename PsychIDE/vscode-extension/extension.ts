@@ -1,8 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 
+const execFileAsync = promisify(execFile);
 let diagnosticCollection: vscode.DiagnosticCollection;
+let extensionContext: vscode.ExtensionContext | undefined;
 
 export async function activate(context: vscode.ExtensionContext) {
     diagnosticCollection = vscode.languages.createDiagnosticCollection('psych-ide');
@@ -200,36 +204,104 @@ export async function activate(context: vscode.ExtensionContext) {
     }, '(', ','));
 
     console.log('Psych Engine IDE commands registered');
+    extensionContext = context;
 }
 
+async function validateLuaFile(document: vscode.TextDocument) {
+    const diagnostics: vscode.Diagnostic[] = [];
+    const text = document.getText();
+
+    if (!extensionContext) {
+        return;
+    }
+
+    const validatorPath = path.join(extensionContext.extensionPath, '..', 'backend', 'lua_validator.py');
+    if (!fs.existsSync(validatorPath)) {
+        diagnostics.push(...getFallbackLuaDiagnostics(document));
+        diagnosticCollection.set(document.uri, diagnostics);
+        return;
+    }
+
+    const pythonCandidates = [process.env.PYTHON || 'python3', 'python'];
+    let output: any = null;
+    let lastError: string | undefined;
+
+    for (const candidate of pythonCandidates) {
+        try {
+            const result = await execFileAsync(candidate, [validatorPath, '--json', document.uri.fsPath], { timeout: 10000 });
+            output = JSON.parse(result.stdout);
+            break;
+        } catch (err: any) {
+            if (err.code === 'ENOENT') {
+                lastError = `Python executable not found: ${candidate}`;
+                continue;
+            }
+            if (err.stdout) {
+                try {
+                    output = JSON.parse(err.stdout);
+                    break;
+                } catch (parseErr) {
+                    lastError = `Failed to parse validator output from ${candidate}: ${parseErr}`;
+                }
+            } else {
+                lastError = err.message || String(err);
+            }
+        }
+    }
+
+    if (output && (Array.isArray(output.errors) || Array.isArray(output.warnings))) {
+        const lines = text.split('\n');
+        const translateSeverity = (severity: string) => {
+            switch (severity.toLowerCase()) {
+                case 'error': return vscode.DiagnosticSeverity.Error;
+                case 'warning': return vscode.DiagnosticSeverity.Warning;
+                default: return vscode.DiagnosticSeverity.Information;
+            }
+        };
+
+        const addDiagnostic = (item: any, defaultSeverity: vscode.DiagnosticSeverity) => {
+            const lineIndex = Math.max(0, (typeof item.line === 'number' ? item.line : 1) - 1);
+            const lineText = lines[lineIndex] || '';
+            const range = new vscode.Range(lineIndex, 0, lineIndex, lineText.length);
+            const severity = item.severity ? translateSeverity(item.severity) : defaultSeverity;
+            diagnostics.push(new vscode.Diagnostic(range, item.message || 'Lua validation issue', severity));
+        };
+
+        output.errors?.forEach((item: any) => addDiagnostic(item, vscode.DiagnosticSeverity.Error));
+        output.warnings?.forEach((item: any) => addDiagnostic(item, vscode.DiagnosticSeverity.Warning));
+    } else {
+        diagnostics.push(...getFallbackLuaDiagnostics(document));
+        if (lastError) {
+            diagnostics.push(new vscode.Diagnostic(
+                new vscode.Range(0, 0, 0, 1),
+                `Lua validator fallback: ${lastError}`,
+                vscode.DiagnosticSeverity.Information
+            ));
+        }
+    }
+
+    diagnosticCollection.set(document.uri, diagnostics);
+}
+
+function getFallbackLuaDiagnostics(document: vscode.TextDocument): vscode.Diagnostic[] {
     const diagnostics: vscode.Diagnostic[] = [];
     const text = document.getText();
     const lines = text.split('\n');
-    
-    const psychFunctions = [
-        'initLuaShader', 'setSpriteShader', 'setShaderFloat', 'setShaderInt', 
-        'setShaderVec2', 'setShaderVec3', 'makeLuaSprite', 'addLuaSprite', 
-        'makeGraphic', 'runHaxeCode', 'debugPrint', 'getSongPosition',
-        'getVar', 'setVar', 'doTweenX', 'doTweenY'
-    ];
 
     lines.forEach((line, i) => {
-        // Skip comments
         if (line.trim().startsWith('--')) return;
 
-        // Check for integer literals in float contexts (setShaderFloat with integer)
-        const floatMatch = line.match(/setShaderFloat\([^,]+,\s*['"]([\w_]+)['"]\s*,\s*(-?\d+)(?![.\d])/);
+        const floatMatch = line.match(/setShaderFloat\([^,]+,\s*['"][\w_]+['"]\s*,\s*(-?\d+)(?![.\d])/);
         if (floatMatch) {
-            const col = line.indexOf(floatMatch[2]);
-            const range = new vscode.Range(i, col, i, col + floatMatch[2].length);
+            const col = line.indexOf(floatMatch[1]);
+            const range = new vscode.Range(i, col, i, col + floatMatch[1].length);
             diagnostics.push(new vscode.Diagnostic(
                 range,
-                `Float literal should be ${floatMatch[2]}.0`,
+                `Float literal should be ${floatMatch[1]}.0`,
                 vscode.DiagnosticSeverity.Warning
             ));
         }
 
-        // Check for division that should use .0
         const divMatch = line.match(/\/\s*1000(?![.\d])/);
         if (divMatch) {
             const col = line.indexOf(divMatch[0]);
@@ -242,7 +314,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    diagnosticCollection.set(document.uri, diagnostics);
+    return diagnostics;
 }
 
 function validateJsonFile(document: vscode.TextDocument) {
@@ -397,16 +469,17 @@ function getSnippetExplorerHtml(webview: vscode.Webview, snippets: any[]) {
             const opt = document.createElement('option'); opt.value = s; opt.text = s; sourceFilter.appendChild(opt);
         });
 
-        function renderList(filter=''){
+        function renderList(filter = '') {
             const src = sourceFilter.value;
             listEl.innerHTML = '';
             const q = filter.toLowerCase();
-            snippets.filter(s=> (src==='all' || s.source===src) && (
+            snippets.filter(s => (src === 'all' || s.source === src) && (
                 s.prefix.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.description.toLowerCase().includes(q)
-            )).forEach(s=>{
-                const it = document.createElement('div'); it.className='item';
-                it.innerHTML = `<div class='prefix'>${escapeHtml(s.prefix)}</div><div class='desc'>${escapeHtml(s.description)}</div>`;
-                it.onclick = ()=>{ selectSnippet(s); };
+            )).forEach(s => {
+                const it = document.createElement('div');
+                it.className = 'item';
+                it.innerHTML = "<div class='prefix'>" + escapeHtml(s.prefix) + "</div><div class='desc'>" + escapeHtml(s.description) + "</div>"
+                it.onclick = () => { selectSnippet(s); };
                 listEl.appendChild(it);
             });
         }

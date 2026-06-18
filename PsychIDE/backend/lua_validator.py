@@ -123,3 +123,42 @@ class LuaValidator:
             'errors': self.errors,
             'warnings': self.warnings
         }
+
+
+if __name__ == '__main__':
+    import argparse
+    import json
+    import sys
+
+    parser = argparse.ArgumentParser(description='Validate Lua code for Psych Engine')
+    parser.add_argument('--json', action='store_true', help='Output diagnostics as JSON')
+    parser.add_argument('path', nargs='?', help='Path to Lua file to validate')
+    args = parser.parse_args()
+
+    if not args.path:
+        parser.error('Missing Lua file path')
+
+    try:
+        with open(args.path, 'r', encoding='utf-8') as fh:
+            lua_code = fh.read()
+    except Exception as e:
+        payload = {'errors': [{'line': 1, 'message': f'Unable to read file: {e}', 'severity': 'error'}], 'warnings': []}
+        if args.json:
+            print(json.dumps(payload))
+            sys.exit(1)
+        print(payload['errors'][0]['message'], file=sys.stderr)
+        sys.exit(1)
+
+    validator = LuaValidator()
+    errors, warnings = validator.validate(lua_code)
+    payload = {'errors': errors, 'warnings': warnings}
+
+    if args.json:
+        print(json.dumps(payload))
+        sys.exit(0)
+
+    for error in errors:
+        print(f"Error line {error['line']}: {error['message']}")
+    for warning in warnings:
+        print(f"Warning line {warning['line']}: {warning['message']}")
+    sys.exit(0)
